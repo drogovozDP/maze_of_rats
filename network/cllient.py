@@ -58,7 +58,7 @@ def main():
     clock = pygame.time.Clock()
 
     net = Network('127.0.0.1', 8000)
-    startPos = read_pos(net.getPos())
+    startPos = read_pos(net.get_position())
     players.append(Player(startPos[0], startPos[1], (0, 255, 0)))
     players.append(Player(0, 0, (255, 0, 0)))
 

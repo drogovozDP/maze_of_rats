@@ -8,7 +8,7 @@ class Network:
         self.buffer_size = buffer_size
         self.position = self.connect()
 
-    def getPos(self):
+    def get_position(self):
         return self.position
 
     def connect(self):
