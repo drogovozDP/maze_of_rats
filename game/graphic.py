@@ -9,8 +9,13 @@ class Graphic:
         self.set_max_xy()
         self.set_cell_wh()
 
+    def draw_environment(self):
+        self.draw_maze()
+        self.draw_players()
+
     def draw_players(self):
-        pass
+        for rat in self.client.rats:
+            rat.draw()
 
     def draw_maze(self):
         for y, row in enumerate(self.client.maze):
