@@ -1,5 +1,7 @@
 import pygame as pg
+import numpy as np
 from game.consts import *
+from game.graphic import Graphic
 
 
 class GameClient:
@@ -14,11 +16,14 @@ class GameClient:
         self.pg = pg
         self.screen = self.pg.display.set_mode((WIDTH, HEIGHT))
         self.maze = self.create_maze_from_str(maze_str, maze_shape)
+        self.graphic = Graphic(self)
         self.clock = self.pg.time.Clock()
         self.FPS = 60
         self.running = True
 
-    def create_maze_from_str(self, maze, maze_shape):
+    def create_maze_from_str(self, maze_str, maze_shape):
+        maze = np.array([int(cell) for cell in maze_str.split(', ')]).reshape(maze_shape)
+        print(maze)
         return maze
 
     def this_player_input(self):
@@ -38,6 +43,7 @@ class GameClient:
     def update_screen(self):
         self.clock.tick(self.FPS)
         self.screen.fill(COLOR['bg'])
+        self.graphic.draw_maze()
         self.pg.display.update()
 
     def run(self):
