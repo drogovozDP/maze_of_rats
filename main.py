@@ -18,7 +18,7 @@ all we have to do is use np.array().reshape(shape) and maze_str will be matrix a
 
 if __name__ == '__main__':
     GameClient(
-        this_player=0,
+        this_player=2,
         players={0: (250, 150), 1: (400, 150), 2: (150, 400)},
         maze_str="0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 2, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0",
         maze_shape=(5, 7)

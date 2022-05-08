@@ -9,14 +9,22 @@ class Rat:
         self.client = client
         self.x = x
         self.y = y
+        self.velocity = 10
         self.id = id
         self.rat = self.create_shape()
 
     def create_shape(self):
         return lambda x, y: self.client.pg.Rect(x, y, 30, 30)
 
-    def move(self):
-        pass
+    def move(self, direction):
+        if direction == 'up':
+            self.y -= self.velocity
+        elif direction == 'down':
+            self.y += self.velocity
+        elif direction == 'left':
+            self.x -= self.velocity
+        elif direction == 'right':
+            self.x += self.velocity
 
     def draw(self):
         self.client.pg.draw.rect(self.client.screen, (255, 0, 0), self.rat(self.x, self.y))
@@ -59,13 +67,13 @@ class GameClient:
                 self.running = False
         keys = self.pg.key.get_pressed()
         if keys[self.pg.K_UP]:
-            pass
+            self.rats[self.this_player].move('up')
         if keys[self.pg.K_DOWN]:
-            pass
+            self.rats[self.this_player].move('down')
         if keys[self.pg.K_LEFT]:
-            pass
+            self.rats[self.this_player].move('left')
         if keys[self.pg.K_RIGHT]:
-            pass
+            self.rats[self.this_player].move('right')
 
     def update_screen(self):
         self.clock.tick(self.FPS)
