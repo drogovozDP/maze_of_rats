@@ -8,7 +8,7 @@ Maze must have shape = (2 * i + 1, 2 * j + 1), i, j = 2, 3, ...
 shape = (11, 11)
 
 
-def generate_maze(shape):
+def generate_maze(shape, threshold=0.8):
     maze = np.full(shape, 2)
 
     # generating walls
@@ -57,18 +57,33 @@ def generate_maze(shape):
     while bypass:
         directions = get_directions()
 
-        if len(directions) > 0:   #forward
+        if len(directions) > 0:  # forward
             new_pos = random.choice(directions)
             prev_poses.append(pos)
             visit_cell(new_pos, pos)
             pos = new_pos.copy()
-        else:
+        else:  # backward
             pos = prev_poses.pop()
 
         if len(prev_poses) == 0:
             bypass = False
 
-    return maze
+    # make noise to randomize paths
+    def make_noise(shape, threshold):
+        noise = np.ones(shape, dtype=int)
+        global maze
+        for y in range(noise.shape[0]):
+            for x in range(noise.shape[1]):
+                if random.random() > threshold:
+                    noise[y, x] = 0
+        noise[:, 0] = 1
+        noise[:, -1] = 1
+        noise[0, :] = 1
+        noise[-1, :] = 1
 
-maze = generate_maze(shape)
-print(maze)
+        return noise
+
+    noise = make_noise(shape, threshold)
+    maze = maze * noise
+
+    return maze
