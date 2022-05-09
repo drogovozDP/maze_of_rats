@@ -5,7 +5,7 @@ import random
 Maze must have shape = (2 * i + 1, 2 * j + 1), i, j = 2, 3, ...
 """
 
-shape = (7, 7)
+shape = (11, 11)
 
 
 def generate_maze(shape):
@@ -52,7 +52,7 @@ def generate_maze(shape):
         return directions
 
     pos = [1, 1]
-    prev_list = []
+    prev_poses = []
     maze[pos[0], pos[1]] = 0
 
     iter = 0
@@ -62,17 +62,19 @@ def generate_maze(shape):
         print(maze)
         print(f"directions: {directions}")
 
-        new_pos = random.choice(directions)
+        if len(directions) > 0:
+            new_pos = random.choice(directions)
 
-        print(f"random choice: {new_pos}")
+            print(f"random choice: {new_pos}")
 
-        prev_list.append(pos)
-        visit_cell(new_pos, pos)
-        pos = new_pos.copy()
-
+            prev_poses.append(pos)
+            visit_cell(new_pos, pos)
+            pos = new_pos.copy()
+        else:
+            pos = prev_poses.pop()
         print("=" * 50)
 
-        if len(prev_list) == 0 or iter == 5:
+        if len(prev_poses) == 0 or iter == 5:
             break
 
     # maze[shape[0] // 2, shape[1] // 2] = 4
