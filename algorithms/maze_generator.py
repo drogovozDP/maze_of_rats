@@ -30,9 +30,14 @@ def generate_maze(shape):
             return False
         return True if maze[y, x] == 2 else False
 
-    def visit_cell(shape):
-        y, x = shape
-        maze[y, x] = 0
+    def visit_cell(new_pos, old_pos):
+        ny, nx = new_pos
+        oy, ox = old_pos
+        dy, dx = (ny - oy) // 2, (nx - ox) // 2
+        print(f"old: x={ox}, y={oy}")
+        print(f"new: x={nx}, y={ny}")
+        print("-----------------")
+        maze[ny, nx], maze[oy + dy, ox + dx] = 0, 0
 
     def get_directions():
         directions = []
@@ -48,23 +53,27 @@ def generate_maze(shape):
 
     pos = [1, 1]
     prev_list = []
-    visit_cell(pos)
+    maze[pos[0], pos[1]] = 0
 
     iter = 0
     while True:
-        # check_neighbors()
         directions = get_directions()
-        new_pos = random.choice(directions)
         print(f"Iter={iter} ||| " + "=" * 50)
         print(maze)
         print(f"directions: {directions}")
+
+        new_pos = random.choice(directions)
+
         print(f"random choice: {new_pos}")
+
+        prev_list.append(pos)
+        visit_cell(new_pos, pos)
+        pos = new_pos.copy()
+
         print("=" * 50)
-        # prev_list.append(pos)
 
-        if len(prev_list) == 0:
+        if len(prev_list) == 0 or iter == 5:
             break
-
 
     # maze[shape[0] // 2, shape[1] // 2] = 4
     return maze
