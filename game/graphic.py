@@ -28,7 +28,7 @@ class Graphic:
             self.client.screen, COLOR[clr],
             self.client.pg.Rect(
                 x + pad_x, y + pad_y,
-                self.cell_size * 1.1, self.cell_size * 1.1
+                self.cell_size * 1.2, self.cell_size * 1.2
             )
         )
 
