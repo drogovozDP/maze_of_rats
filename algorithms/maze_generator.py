@@ -10,6 +10,7 @@ shape = (11, 11)
 
 def generate_maze(shape):
     maze = np.full(shape, 2)
+
     # generating walls
     for x in range(0, maze.shape[1], 2):
         maze[:, x] = 1
@@ -34,9 +35,6 @@ def generate_maze(shape):
         ny, nx = new_pos
         oy, ox = old_pos
         dy, dx = (ny - oy) // 2, (nx - ox) // 2
-        print(f"old: x={ox}, y={oy}")
-        print(f"new: x={nx}, y={ny}")
-        print("-----------------")
         maze[ny, nx], maze[oy + dy, ox + dx] = 0, 0
 
     def get_directions():
@@ -55,30 +53,22 @@ def generate_maze(shape):
     prev_poses = []
     maze[pos[0], pos[1]] = 0
 
-    iter = 0
-    while True:
+    bypass = True
+    while bypass:
         directions = get_directions()
-        print(f"Iter={iter} ||| " + "=" * 50)
-        print(maze)
-        print(f"directions: {directions}")
 
-        if len(directions) > 0:
+        if len(directions) > 0:   #forward
             new_pos = random.choice(directions)
-
-            print(f"random choice: {new_pos}")
-
             prev_poses.append(pos)
             visit_cell(new_pos, pos)
             pos = new_pos.copy()
         else:
             pos = prev_poses.pop()
-        print("=" * 50)
 
-        if len(prev_poses) == 0 or iter == 5:
-            break
+        if len(prev_poses) == 0:
+            bypass = False
 
-    # maze[shape[0] // 2, shape[1] // 2] = 4
     return maze
 
-generate_maze(shape)
-# print(generate_maze(shape).shape)
+maze = generate_maze(shape)
+print(maze)
