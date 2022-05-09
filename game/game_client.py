@@ -13,10 +13,11 @@ class Entity:
         self.y = y
         self.color = color
         self.size = self.client.graphic.cell_size
+        self.padding = self.client.graphic.cell_pad
 
     def draw(self):
-        x = self.x * self.size
-        y = self.y * self.size
+        x = self.padding[0] + self.x * self.size
+        y = self.padding[1] + self.y * self.size
         self.client.pg.draw.rect(self.client.screen, self.color,
                                  self.client.pg.Rect(x, y, self.size, self.size))
 

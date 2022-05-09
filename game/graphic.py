@@ -42,5 +42,5 @@ class Graphic:
         """
         self.cell_size = min(self.height / self.max_y, self.width / self.max_x)
         self.cell_pad = ((self.width - self.max_x * self.cell_size) / 2, 0) \
-            if self.max_x * self.width > self.max_y * self.height else \
+            if self.max_x * self.width < self.max_y * self.height else \
             (0, (self.height - self.max_y * self.cell_size) / 2)
