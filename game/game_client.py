@@ -2,7 +2,8 @@ import pygame as pg
 import numpy as np
 from game.consts import *
 from game.graphic import Graphic
-from _thread import *
+from threading import Thread
+import time
 
 
 class Entity:
@@ -26,6 +27,8 @@ class Rat(Entity):
         self.velocity = 1
         self.maze_vision = self.client.maze.copy()
         self.id = id
+        self.dx = 0
+        self.dy = 0
 
     def create_vision(self):
         maze_shape = self.client.maze.shape()
@@ -37,26 +40,30 @@ class Rat(Entity):
         self.client.maze[y, x] = RAT
         self.x = x
         self.y = y
-        print(self.client.maze)
 
-    def check_collision(self, dx, dy):
-        x = self.x + dx
-        y = self.y + dy
-        cell = self.client.maze[y, x]
-        print(x, y, self.client.maze[y, x])
-        if cell != FLOOR and cell != FINISH:
-            return
-        self.update_maze(x, y)
-
-    def move(self, direction):
+    def set_dxdy(self, direction):
+        dx, dy = 0, 0
         if direction == 'up':
-            self.check_collision(0, -self.velocity)
+            dx, dy = 0, -self.velocity
         elif direction == 'down':
-            self.check_collision(0, self.velocity)
+            dx, dy = 0, self.velocity
         elif direction == 'left':
-            self.check_collision(-self.velocity, 0)
+            dx, dy = -self.velocity, 0
         elif direction == 'right':
-            self.check_collision(self.velocity, 0)
+            dx, dy = self.velocity, 0
+        self.dx = dx
+        self.dy = dy
+
+    def check_collision(self):
+        x = self.x + self.dx
+        y = self.y + self.dy
+        cell = self.client.maze[y, x]
+        if cell == FLOOR or cell == FINISH:
+            self.update_maze(x, y)
+        self.dx, self.dy = 0, 0
+
+    def move(self):
+        self.check_collision()
 
 
 class GameClient:
@@ -79,6 +86,8 @@ class GameClient:
 
         self.this_player = this_player  # current player id
         self.rats = self.create_rats(players)  # create rats
+        self.server_listener = Thread(target=self.listen_server, args=())
+        self.server_listener.start()
 
     def create_rats(self, players):
         rats = []
@@ -90,7 +99,6 @@ class GameClient:
         maze = np.array([int(cell) for cell in maze_str.split(', ')]).reshape(maze_shape)
         for plr, val in players.items():
             maze[val[1], val[0]] = RAT
-        print(maze)
         return maze
 
     def this_player_input(self):
@@ -99,13 +107,13 @@ class GameClient:
                 self.running = False
         keys = self.pg.key.get_pressed()
         if keys[self.pg.K_UP]:
-            self.rats[self.this_player].move('up')
+            self.rats[self.this_player].set_dxdy('up')
         if keys[self.pg.K_DOWN]:
-            self.rats[self.this_player].move('down')
+            self.rats[self.this_player].set_dxdy('down')
         if keys[self.pg.K_LEFT]:
-            self.rats[self.this_player].move('left')
+            self.rats[self.this_player].set_dxdy('left')
         if keys[self.pg.K_RIGHT]:
-            self.rats[self.this_player].move('right')
+            self.rats[self.this_player].set_dxdy('right')
 
     def update_screen(self):
         self.clock.tick(self.FPS)
@@ -117,3 +125,26 @@ class GameClient:
         while self.running:
             self.this_player_input()
             self.update_screen()
+
+    def make_step(self):
+        pass
+
+    def listen_server(self):
+        """
+        this method must send (playable_rat_coords, finish_check) to server
+        and receive (other_rat_coords, finish_check) from server
+        """
+        """
+        client.sendto(server)
+        params = client.recv(server)
+        for rat in self.rats:
+            rat.x = params['rats'][rat.id].x
+            rat.y = params['rats'][rat.id].y
+        ...
+        """
+        while self.running:
+            time.sleep(0.5)
+            self.rats[self.this_player].move()
+        """
+        send to the server coords of this player and finish check
+        """
