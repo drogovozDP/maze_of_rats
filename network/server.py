@@ -58,8 +58,4 @@ pos = [(100, 10), (50, 50)]
 
 server = Server(server, port)
 server.listen()
-
-
-
-
-
+print("TYTA")
