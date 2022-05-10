@@ -38,7 +38,7 @@ class Graphic:
 
     def set_cell_wh(self):
         """
-        Cretas cell_size for cell width and height and cell_pad for padding
+        Creates cell_size for cell width and height and cell_pad for padding
         """
         self.cell_size = min(self.height / self.max_y, self.width / self.max_x)
         self.cell_pad = ((self.width - self.max_x * self.cell_size) / 2, 0) \
