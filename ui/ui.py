@@ -47,6 +47,52 @@ class UI:
         print('start server')
         self.start_screen.destroy()
 
+        self.setup_screen = Toplevel()
+        self.setup_screen.title("Maze of Rats: connection")
+        self.setup_screen.resizable(width=False,
+                                         height=False)
+        self.setup_screen.configure(width=400,
+                                         height=300)
+
+        # Address section
+        addr_entry = Entry(self.setup_screen,
+                           font="Helvetica 14")
+        addr_entry.place(relwidth=0.6,
+                         relheight=0.12,
+                         relx=0.35,
+                         rely=0.2)
+        addr_entry.focus()
+
+        Label(self.setup_screen,
+              text="Address:",
+              justify=CENTER,
+              font="Helvetica 14 bold").place(relheight=0.15,
+                                              relx=0.08,
+                                              rely=0.2)
+
+        # Bots sections
+        bots_count_entry = Entry(self.setup_screen,
+                                 font="Helvetica 14")
+        bots_count_entry.place(relwidth=0.6,
+                               relheight=0.12,
+                               relx=0.35,
+                               rely=0.4)
+
+        Label(self.setup_screen,
+              text="Bot count:",
+              justify=CENTER,
+              font="Helvetica 14 bold").place(relheight=0.15,
+                                              relx=0.08,
+                                              rely=0.4)
+
+        # Button to next screen
+        Button(self.setup_screen,
+               text="connect",
+               font="Helvetica 14 bold",
+               command=lambda: self.start_waiting_room('server')).place(relx=0.4,
+                                                                        rely=0.65)
+
+
     def start_client_screen(self):
         """
         creates screen to connect to host
@@ -68,6 +114,13 @@ class UI:
                          relx=0.2,
                          rely=0.2)
         addr_entry.focus()
+
+        Label(self.connection_screen,
+              text="Write server address",
+              justify=CENTER,
+              font="Helvetica 14 bold").place(relheight=0.15,
+                                              relx=0.25,
+                                              rely=0.01)
 
         Button(self.connection_screen,
                text="connect",
