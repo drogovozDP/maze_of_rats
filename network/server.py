@@ -1,43 +1,41 @@
 import time
 import socket
 from threading import Thread
+from network.consts import *
 
 
 FORMAT = 'utf-8'
 BUFFSIZE = 2048
-run_game = True
 
 
 class Server:
-    def __init__(self, ip, port):
+    def __init__(self, ip, port, ui):
         self.addr = (ip, port)
+        self.ui = ui
         self.sock = socket.socket(family=socket.AF_INET, type=socket.SOCK_STREAM)
         self.sock.bind(self.addr)
         self.clients = []
-
-    def init_game(self):
-        Thread(target=self.send_game_status, args=()).start()
+        self.run_game = True
+        self.sock.listen()
+        Thread(target=self.listen).start()
+        Thread(target=self.send_game_status).start()
+        print("Wait for connection")
 
     def listen(self):
-        self.sock.listen()
-        self.init_game()
-        print("Wait for connection")
-        while run_game:
+        while True:
             conn, addr = self.sock.accept()
-            conn.send("hi".encode(FORMAT))
+            conn.send(f"{len(self.clients)}".encode(FORMAT))
             self.clients.append(conn)
+            self.ui.update_player_count(len(self.clients), "server")
             print(f"Client {addr} just connected")
 
+    def start_game(self):
+        print("start game")
+
     def send_game_status(self):
-        while True:
+        while self.run_game:
             time.sleep(1)
             for i, client in enumerate(self.clients):
                 message = client.recv(BUFFSIZE).decode(FORMAT)
                 print(f"message from {i}: {message}")
-                client.send(f"message {i}".encode(FORMAT))
-
-
-if __name__ == '__main__':
-    server = Server('127.0.0.1', 8000)
-    Thread(target=server.listen, args=()).start()
-    print('kek')
+                client.send(f"{len(self.clients)}".encode(FORMAT))

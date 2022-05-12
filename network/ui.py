@@ -4,6 +4,8 @@ from tkinter import Label
 from tkinter import Button
 from tkinter import Entry
 from tkinter.constants import CENTER
+from network.server import Server
+from network.client import Client
 
 
 class UI:
@@ -87,11 +89,13 @@ class UI:
 
         # Button to next screen
         Button(self.setup_screen,
-               text="connect",
+               text="next",
                font="Helvetica 14 bold",
-               command=lambda: self.start_waiting_room('server')).place(relx=0.4,
-                                                                        rely=0.65)
-
+               command=lambda: self.start_waiting_room('server',
+                                                       address=addr_entry.get(),
+                                                       bots=bots_count_entry.get()
+                                                       )).place(relx=0.4,
+                                                                rely=0.65)
 
     def start_client_screen(self):
         """
@@ -125,15 +129,68 @@ class UI:
         Button(self.connection_screen,
                text="connect",
                font="Helvetica 14 bold",
-               command=lambda: self.start_waiting_room('client')).place(relx=0.4,
-                                                                        rely=0.45)
+               command=lambda: self.start_waiting_room('client',
+                                                       address=addr_entry.get()
+                                                       )).place(relx=0.4,
+                                                                rely=0.45)
 
-    def start_waiting_room(self, loader):
-        if loader == 'client':
-            print('client')
-        elif loader == 'server':
-            pass
+    def start_waiting_room(self, loader, **kwargs):
+        try:
+            ip, port = kwargs['address'].split(':')
+            port = int(port)
+        except:
+            ip, port = '127.0.0.1', 8000
 
+        if loader == 'server':
+            bots = kwargs['bots']
+            self.server = Server(ip, int(port), self)
+            print('server', ip, port, bots)
+            self.setup_screen.destroy()
 
-if __name__ == '__main__':
-    ui = UI()
+            # UI
+            self.waiting_room = Toplevel()
+            self.waiting_room.title("Maze of Rats: waiting for players")
+            self.waiting_room.resizable(width=False,
+                                        height=False)
+            self.waiting_room.configure(width=400,
+                                        height=300)
+
+            self.players_count_label = Label(self.waiting_room,
+                                             text="Players: 0",
+                                             justify=CENTER,
+                                             font="Helvetica 14 bold")
+            self.players_count_label.place(relheight=0.15,
+                                           relx=0.08,
+                                           rely=0.4)
+
+            Button(self.waiting_room,
+                   text="start",
+                   font="Helvetica 14 bold",
+                   command=lambda: self.server.start_game()).place(relx=0.4, rely=0.4)
+        else:
+            # UI
+            self.connection_screen.destroy()
+            self.waiting_room = Toplevel()
+            self.waiting_room.title("Maze of Rats: waiting for players")
+            self.waiting_room.resizable(width=False,
+                                        height=False)
+            self.waiting_room.configure(width=400,
+                                        height=300)
+
+            self.cleint = Client(ip, port, self)
+            self.players_count_label = Label(self.waiting_room,
+                                             text=f"Waiting for host. Your id = {self.cleint.id} \n All players = {self.cleint.players_count}",
+                                             justify=CENTER,
+                                             font="Helvetica 14 bold")
+            self.players_count_label.place(relheight=0.15,
+                                           relx=0.08,
+                                           rely=0.4)
+            # self.cleint.sock.recv(1024)
+
+    def update_player_count(self, count, which):
+        if which == "server":
+            text = f"Players: {count}"
+        else:
+            text = f"Waiting for host. Your id = {self.cleint.id} \n All players = {count}"
+        self.players_count_label.config(text=text)
+
