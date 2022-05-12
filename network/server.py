@@ -16,6 +16,7 @@ class Server:
         self.sock.bind(self.addr)
         self.clients = []
         self.run_game = True
+        self.status = 'wait'
         self.sock.listen()
         Thread(target=self.listen).start()
         Thread(target=self.send_game_status).start()
@@ -38,4 +39,10 @@ class Server:
             for i, client in enumerate(self.clients):
                 message = client.recv(BUFFSIZE).decode(FORMAT)
                 print(f"message from {i}: {message}")
-                client.send(f"{len(self.clients)}".encode(FORMAT))
+
+            message = ''
+            if self.status == 'wait':
+                message = f'wait; {len(self.clients)}'
+
+            for client in self.clients:
+                client.send(message.encode(FORMAT))

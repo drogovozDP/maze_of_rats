@@ -17,8 +17,16 @@ class Client:
         while True:
             self.sock.send("message".encode(FORMAT))
             message = self.sock.recv(BUFFSIZE).decode(FORMAT)
-            message = message.split(',')
-            self.players_count = int(message[0])
 
-            print(f"Message from server: {message}")
-            self.ui.update_player_count(self.players_count, "client")
+            message = message.split(';')
+
+            if message[0] == 'wait':
+                print(f"Message from server: {message}")
+                self.ui.update_player_count(self.players_count, "client")
+                self.players_count = int(message[1])
+            elif message[0] == 'init':
+                pass
+            elif message[0] == 'game':
+                pass
+            elif 'end' in message[0]:
+                pass

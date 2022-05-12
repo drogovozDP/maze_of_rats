@@ -193,4 +193,3 @@ class UI:
         else:
             text = f"Waiting for host. Your id = {self.cleint.id} \n All players = {count}"
         self.players_count_label.config(text=text)
-
