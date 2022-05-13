@@ -139,11 +139,11 @@ class UI:
             ip, port = kwargs['address'].split(':')
             port = int(port)
         except:
-            ip, port = '127.0.0.1', 8000
+            ip, port = '127.0.0.1', 8001
 
         if loader == 'server':
-            bots = kwargs['bots']
-            self.server = Server(ip, int(port), self)
+            bots = int(kwargs['bots'])
+            self.server = Server(ip, int(port), self, bots)
             print('server', ip, port, bots)
             self.setup_screen.destroy()
 
@@ -185,7 +185,6 @@ class UI:
             self.players_count_label.place(relheight=0.15,
                                            relx=0.08,
                                            rely=0.4)
-            # self.cleint.sock.recv(1024)
 
     def update_player_count(self, count, which):
         if which == "server":

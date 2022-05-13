@@ -18,7 +18,8 @@ class Graphic:
             rat.draw()
 
     def draw_maze(self):
-        for y, row in enumerate(self.client.maze):
+        # for y, row in enumerate(self.client.maze):
+        for y, row in enumerate(self.client.this_rat.maze_vision):
             for x, cell in enumerate(row):
                 self._draw_cell(x * self.cell_size, y * self.cell_size, clr=cell)
 
